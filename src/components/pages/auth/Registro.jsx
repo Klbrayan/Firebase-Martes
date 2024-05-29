@@ -2,14 +2,16 @@ import React, { useState, useEffect } from "react";
 import "./Login.css";
 import { iniDatabase } from "../../config/firebaseConfig";
 import { collection, getDocs } from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
-const Login = () => {
+const Registro = () => {
 
-  const [usuarios, setUsuarios] = useState()
+  const [usuarios, setUsuarios] = useState([])
   const [user, setuser] = useState("");
   const [password, setpassword] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   let redireccion = useNavigate();
 
   async function getUsuarios() {
@@ -33,16 +35,16 @@ const Login = () => {
   // es importante colocar los [] porque aqui se guarda los datos
 
   const buscarUsuario = () => {
-    let estado = usuarios.some((usuario) => usuario.user === user && usuario.password === password);
+    let estado = usuarios.some((usuario) => usuario.user === user );
 
     return estado
   };
 
-  const iniciarSesion = () => {
-    if (buscarUsuario()) {
+  const registrarUsuario = () => {
+    if (!buscarUsuario()) {
 
       Swal.fire({
-        title: "Bienvenido perra",
+        title: "Bienvenido",
         text: "Será redireccionado al panel principal",
         icon: "success"
 
@@ -52,7 +54,7 @@ const Login = () => {
       console.log("Error de credenciales")
       Swal.fire({
         title: "ERROR",
-        text: "Usuario y/o contraseña incorrecto",
+        text: "El usuario ya existe en la base de datos",
         icon: "error"
       });
     }
@@ -64,25 +66,26 @@ const Login = () => {
   return (
     <div className="login-page">
       <div className="form">
-        <form className="register-form">
-          <input type="text" placeholder="name" />
-          <input type="password" placeholder="password" />
-          <input type="text" placeholder="email address" />
-          <button>create</button>
-          <p className="message">
-            Already registered? <a href="#">Sign In</a>
-          </p>
-        </form>
         <form className="login-form">
-          <input onChange={(e) => setuser(e.target.value)}
+
+          <input onChange={(e) => setEmail(e.target.value)}
             type="text"
-            placeholder="username" />
+            placeholder="email" />
+          <input onChange={(e) => setName(e.target.value)}
+            type="text"
+            placeholder="name" />
           <input onChange={(e) => setpassword(e.target.value)}
             type="password"
             placeholder="password" />
-          <button onClick={iniciarSesion} type="button">login</button>
+          <input onChange={(e) => setuser(e.target.value)}
+            type="text"
+            placeholder="username" />
+
+
+
+          <button onClick={registrarUsuario} type="button">Registro</button>
           <p className="message">
-            Not registered? <a href="#">Create an account</a>
+            Ya está registrado? <Link to="/">Iniciar sesion</Link>
           </p>
         </form>
       </div>
@@ -90,4 +93,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Registro;
